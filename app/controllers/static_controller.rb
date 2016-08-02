@@ -1,4 +1,4 @@
-class StaticController < ActionController::API
+class StaticController < ApplicationController
   def home
     @greeting = 'hello'
     render json: @greeting

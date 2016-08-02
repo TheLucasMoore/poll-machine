@@ -1,8 +1,13 @@
 class QuestionsController < ApplicationController
-  before_action find_question, only [:show, :delete, :update]
+  before_action :find_question, only: [:show, :delete, :update]
 
   def show
     render json: @question
+  end
+
+  def index
+    @questions = Question.all
+    render json: @questions
   end
 
   def new

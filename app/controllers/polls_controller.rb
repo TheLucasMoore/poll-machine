@@ -1,7 +1,13 @@
 class PollsController < ApplicationController
-  before_action find_poll, only [:show, :delete, :update]
+  before_action :find_poll, only: [:show, :delete, :update]
+
   def show
     render json: @poll
+  end
+
+  def index
+    @polls = Poll.all
+    render json: @polls
   end
 
   def new
