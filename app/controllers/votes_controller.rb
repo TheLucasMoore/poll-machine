@@ -11,6 +11,7 @@ class VotesController < ApplicationController
   end
 
   def new
+    @vote = Vote.new
   end
 
   def create
@@ -25,6 +26,10 @@ class VotesController < ApplicationController
   end
 
   private
+
+  def vote_params
+    require(:vote).permit(:user_id, :question)
+  end
 
   def find_vote
     @vote = Vote.find(params[:id])
