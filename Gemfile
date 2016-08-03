@@ -7,9 +7,6 @@ gem 'rails', '~> 5.0.0'
 gem 'pg'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
-gem 'devise'
-gem 'omniauth'
-gem 'omniauth-twitter'
 gem 'active_model_serializers'
 gem 'responders'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
