@@ -28,14 +28,30 @@ module.exports = React.createClass({
       }
     });
   },
+  writeToAPI: function(method, url, data, successFunction) {
+    Reqwest({
+      url: url,
+      data: data,
+      type: 'json',
+      method: method,
+      contentType: 'application/json',
+      headers: {'Authorization': 'Authorized'},
+      // unable to get JWT and user sessions functioning, so I'll come back to it.
+      success: successFunction,
+      error: function(error) {
+        console.error(url, error['response']);
+        location = '/';
+      }
+    });
+  },
   render: function () {
     var menu = this.state.showMenu ? 'show-menu' : 'hide-menu';
 
     return (
       <div id="app" className={menu}>
-        <Menu sendMenuClick={this.handleMenuClick} />
+        <Menu origin={this.props.origin} sendMenuClick={this.handleMenuClick} />
         <div id="content">
-          <RouteHandler origin={this.props.origin} readFromAPI={this.readFromAPI} />
+          <RouteHandler origin={this.props.origin} readFromAPI={this.readFromAPI} writeToAPI={this.writeToAPI} />
         </div>
       </div>
     );

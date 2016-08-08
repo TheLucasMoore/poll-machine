@@ -22574,7 +22574,7 @@
 	var Router = __webpack_require__(/*! react-router */ 152);
 	var App = __webpack_require__(/*! ../components/layout/App.jsx */ 194);
 	var PollsView = __webpack_require__(/*! ../components/polls/View.jsx */ 196);
-	var AboutView = __webpack_require__(/*! ../components/static/AboutView.jsx */ 200);
+	var AboutView = __webpack_require__(/*! ../components/static/AboutView.jsx */ 201);
 	var DefaultRoute = Router.DefaultRoute;
 	var Route = Router.Route;
 	
@@ -22596,7 +22596,7 @@
 	var React = __webpack_require__(/*! react */ 6);
 	var Reqwest = __webpack_require__(/*! reqwest */ 195);
 	var PollsView = __webpack_require__(/*! ../polls/View.jsx */ 196);
-	var Menu = __webpack_require__(/*! ./Menu.jsx */ 199);
+	var Menu = __webpack_require__(/*! ./Menu.jsx */ 200);
 	var Router = __webpack_require__(/*! react-router */ 152);
 	var RouteHandler = Router.RouteHandler;
 	
@@ -22623,14 +22623,30 @@
 	      }
 	    });
 	  },
+	  writeToAPI: function(method, url, data, successFunction) {
+	    Reqwest({
+	      url: url,
+	      data: data,
+	      type: 'json',
+	      method: method,
+	      contentType: 'application/json',
+	      // headers: {'Authorization': sessionStorage.getItem('jwt')},
+	      // unable to get JWT and user sessions functioning, so I'll come back to it.
+	      success: successFunction,
+	      error: function(error) {
+	        console.error(url, error['response']);
+	        location = '/';
+	      }
+	    });
+	  },
 	  render: function () {
 	    var menu = this.state.showMenu ? 'show-menu' : 'hide-menu';
 	
 	    return (
 	      React.createElement("div", {id: "app", className: menu}, 
-	        React.createElement(Menu, {sendMenuClick: this.handleMenuClick}), 
+	        React.createElement(Menu, {origin: this.props.origin, sendMenuClick: this.handleMenuClick}), 
 	        React.createElement("div", {id: "content"}, 
-	          React.createElement(RouteHandler, {origin: this.props.origin, readFromAPI: this.readFromAPI})
+	          React.createElement(RouteHandler, {origin: this.props.origin, readFromAPI: this.readFromAPI, writeToAPI: this.writeToAPI})
 	        )
 	      )
 	    );
@@ -23271,6 +23287,7 @@
 
 	var React = __webpack_require__(/*! react */ 6);
 	var PollList = __webpack_require__(/*! ./List.jsx */ 197);
+	var PollForm = __webpack_require__(/*! ./Form.jsx */ 199)
 	
 	module.exports = React.createClass({displayName: "exports",
 	  getInitialState: function() {
@@ -23284,9 +23301,17 @@
 	      this.setState({data: polls});
 	    }.bind(this));
 	  },
+	  writePollsToAPI: function(data) {
+	    this.props.writeToAPI('post', this.props.origin + '/polls', data, function(poll) {
+	      var polls = this.state.data;
+	      polls.unshift(poll);
+	      this.setState({data: polls});
+	    }.bind(this));
+	  },
 	  render: function() {
 	    return (
-	      React.createElement("div", {className: "list-view"}, 
+	      React.createElement("div", {className: "poll-view"}, 
+	        React.createElement(PollForm, {writePollsToAPI: this.writePollsToAPI}), 
 	        React.createElement(PollList, {data: this.state.data})
 	      )
 	    );
@@ -23343,6 +23368,40 @@
 
 /***/ },
 /* 199 */
+/*!******************************************!*\
+  !*** ./client/components/polls/Form.jsx ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(/*! react */ 6);
+	
+	module.exports = React.createClass({displayName: "exports",
+	  handleSubmit: function(e) {
+	    e.preventDefault();
+	    var content = this.refs.content.getDOMNode().value.trim();
+	    if (!content) {return;}
+	    // if (this.props.signedIn) {
+	      this.props.writePollsToAPI(JSON.stringify({poll: {title: content}}));
+	      this.refs.content.getDOMNode().value = '';
+	      this.refs.content.getDOMNode().blur();
+	    // } else {
+	    //  alert('Please sign in to blab!');
+	    // Will activate when log in works on Front End
+	    // }
+	  },
+	  render: function() {
+	    return (
+	      React.createElement("form", {className: "polls-form", onSubmit: this.handleSubmit}, 
+	        React.createElement("input", {type: "text", placeholder: "Poll Name", ref: "content", name: "title"}), 
+	        React.createElement("button", {type: "submit", className: "pure-button pure-button-primary"}, "Create")
+	      )
+	    );
+	  }
+	});
+
+
+/***/ },
+/* 200 */
 /*!*******************************************!*\
   !*** ./client/components/layout/Menu.jsx ***!
   \*******************************************/
@@ -23373,7 +23432,7 @@
 
 
 /***/ },
-/* 200 */
+/* 201 */
 /*!************************************************!*\
   !*** ./client/components/static/AboutView.jsx ***!
   \************************************************/
@@ -23386,7 +23445,7 @@
 	    return (
 	      React.createElement("div", {id: "about-view"}, 
 	        React.createElement("h1", null, "About"), 
-	        React.createElement("p", null, "An example of a stateless Ruby API using the rails-api gem, with a React client side app. To fit the definition of stateless, the API does not include action-view, sprockets, or sessions. Roughly speaking, React replaces action-view, Webpack replaces sprockets, and JWT replaces sessions.")
+	        React.createElement("p", null, "This is a story all about how I learned React to build this thing!")
 	      )
 	    );
 	  }

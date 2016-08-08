@@ -10,10 +10,10 @@ class PollsController < ApplicationController
     render json: @polls
   end
 
-  def new
-  end
-
   def create
+    # raise params.inspect
+    @poll = Poll.create(poll_params)
+    render json: @poll
   end
 
   def update
@@ -25,6 +25,10 @@ class PollsController < ApplicationController
   end
 
   private
+
+  def poll_params
+    params.require(:poll).permit(:title)
+  end
 
   def find_poll
     @poll = Poll.find(params[:id])
