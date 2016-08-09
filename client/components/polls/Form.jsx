@@ -1,4 +1,5 @@
 var React = require('react');
+var Button = require('react-bootstrap/lib/button');
 
 module.exports = React.createClass({
   handleSubmit: function(e) {
@@ -18,7 +19,7 @@ module.exports = React.createClass({
     return (
       <form className="polls-form" onSubmit={this.handleSubmit}>
         <input type="text" placeholder="Poll Name" ref="content" name="title"/>
-        <button type="submit" className="pure-button pure-button-primary">Create</button>
+        <Button>Create</Button>
       </form>
     );
   }
